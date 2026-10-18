@@ -1,0 +1,70 @@
+# One command: docker compose up --build
+# App: http://localhost:3000   Swagger: http://localhost:3000/api/docs/   Django admin: /admin/
+x-backend-env: &backend-env
+  POSTGRES_HOST: db
+  POSTGRES_DB: taskflow
+  POSTGRES_USER: taskflow
+  POSTGRES_PASSWORD: taskflow
+  REDIS_URL: redis://redis:6379/0
+  CELERY_TASK_ALWAYS_EAGER: "false"
+  DJANGO_DEBUG: "false"
+  DJANGO_SECRET_KEY: change-me-in-real-deployments
+  DJANGO_ALLOWED_HOSTS: "*"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: taskflow
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: taskflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U taskflow -d taskflow"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    entrypoint: ["./entrypoint.sh"]
+    command: ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+    environment: *backend-env
+    ports:
+      - "8000:8000"
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  worker:
+    build: ./backend
+    command: ["celery", "-A", "config", "worker", "-l", "info"]
+    environment: *backend-env
+    depends_on:
+      backend: { condition: service_started }
+
+  beat:
+    build: ./backend
+    command: ["celery", "-A", "config", "beat", "-l", "info"]
+    environment: *backend-env
+    depends_on:
+      backend: { condition: service_started }
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

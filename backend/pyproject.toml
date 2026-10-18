@@ -1,0 +1,47 @@
+[project]
+name = "taskflow-backend"
+version = "1.0.0"
+description = "Task management REST API (Django + DRF) built with Clean Architecture"
+requires-python = ">=3.11"
+dependencies = [
+    "django>=5.0,<5.2",
+    "djangorestframework>=3.15,<3.16",
+    "djangorestframework-simplejwt>=5.3",
+    "drf-yasg>=1.21.7",
+    "django-cors-headers>=4.3",
+    "psycopg[binary]>=3.1",
+    "celery>=5.4",
+    "redis>=5.0",
+    "gunicorn>=22.0",
+    "whitenoise>=6.6",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-django>=4.8",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "pre-commit>=3.7",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings_test"
+pythonpath = ["."]
+python_files = ["test_*.py"]
+addopts = "--cov=apps --cov-report=term-missing --cov-fail-under=80 -q"
+
+[tool.coverage.run]
+omit = ["*/migrations/*", "*/tests/*", "apps/*/apps.py"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "DJ"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+"apps/tasks/management/commands/seed_demo.py" = ["E501"]
