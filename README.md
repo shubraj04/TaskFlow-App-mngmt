@@ -153,5 +153,3 @@ Key decisions:
 - JWTs are kept in `localStorage` for simplicity (XSS trade-off). Production: httpOnly refresh cookie.
 - Throttle counters use the configured cache (Redis in Docker, per-process memory locally).
 - No frontend unit tests yet (Vitest + Testing Library would be the next addition).
-- Compose file and Dockerfiles were not executed in the authoring sandbox (no Docker daemon); the same
-  services were verified individually (gunicorn with `DEBUG=false` serving Swagger assets, tests on SQLite).
