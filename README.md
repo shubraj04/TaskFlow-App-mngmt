@@ -14,6 +14,15 @@ docker compose up --build
 - Swagger UI: http://localhost:3000/api/docs/
 - Demo logins: `alice`, `bob`, or `carol` / `Demo1234!`
 
+## Screenshots
+
+| Task list | Filters |
+|---|---|
+| ![Task list](docs/tasks.jpg) | ![Filters](docs/filters.jpg) |
+| **Login**<br>![Login](docs/login.png) | **Mobile view**<br>![Mobile view](docs/mobile.png) |
+
+![Swagger API docs](docs/swagger.png)
+
 ## Prerequisites
 
 - Docker Desktop for the containerized setup.
