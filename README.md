@@ -38,10 +38,6 @@ docker compose up --build
 - Reset the database and recreate the stack: `docker compose down -v` followed by `docker compose up --build`.
 - Local backend setup requires Python 3.11 or newer.
 
-A full-stack take-home built with **Django REST Framework** and **React (Vite + TypeScript)**.
-Users register, create tasks, assign them to other users, mark them completed and filter by
-status and due date.
-
 | Requirement | Where |
 |---|---|
 | CRUD, assign, complete, filter by status/due date | `backend/apps/tasks/presentation/views.py` |
@@ -77,7 +73,11 @@ Backend (SQLite, Celery runs tasks inline, no Redis needed):
 
 ```bash
 cd backend
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+# macOS/Linux
+source .venv/bin/activate
 pip install -r requirements-dev.txt
 python manage.py migrate
 python manage.py seed_demo
@@ -153,3 +153,5 @@ Key decisions:
 - JWTs are kept in `localStorage` for simplicity (XSS trade-off). Production: httpOnly refresh cookie.
 - Throttle counters use the configured cache (Redis in Docker, per-process memory locally).
 - No frontend unit tests yet (Vitest + Testing Library would be the next addition).
+- Compose file and Dockerfiles were not executed in the authoring sandbox (no Docker daemon); the same
+  services were verified individually (gunicorn with `DEBUG=false` serving Swagger assets, tests on SQLite).

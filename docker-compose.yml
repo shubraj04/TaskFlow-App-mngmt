@@ -8,7 +8,7 @@ x-backend-env: &backend-env
   REDIS_URL: redis://redis:6379/0
   CELERY_TASK_ALWAYS_EAGER: "false"
   DJANGO_DEBUG: "false"
-  DJANGO_SECRET_KEY: change-me-in-real-deployments
+  DJANGO_SECRET_KEY: A24A7F744757EFA3A26AA399EEB41298DF7506D798D27343EB1958FC7F7AFE8F
   DJANGO_ALLOWED_HOSTS: "*"
 
 services:
